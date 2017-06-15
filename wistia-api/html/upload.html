@@ -1,0 +1,50 @@
+<div class="container core-padding-vrt">
+    <form id="fileupload" action="{{ $ctrl.data.action | trust }}" method="POST" enctype="multipart/form-data" ng-controller="UploadCtrl" data-file-upload="$ctrl.data.options" ng-class="{'fileupload-processing': processing() || loadingFiles}">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 mid">
+                <div class="btn-group btn-group-lg pull-right" role="group" aria-label="Large button group">
+                    <label type="button" class="btn btn-default" ng-disabled="disabled">Add Files..
+                        <input type="file" name="files[]" multiple ng-disabled="disabled" class="invisible">
+                    </label>
+                    <button type="button" class="btn btn-default" ng-click="submit()">Start upload</button>
+                    <button type="button" class="btn btn-default" ng-click="cancel()">Cancel upload</button> </div>
+            </div>
+            <hr class="invisible" style="margin-bottom:0px">
+            <div class="col-xs-12" ng-class="{invisible: !active()}">
+                <div class="progress progress-striped active flat" file-upload-progress="progress()">
+                    <div class="progress-bar progress-bar-success" ng-style="{width: num + '%'}"></div>
+                </div>
+                <div class="progress-extended">&nbsp;</div>
+            </div>
+        </div>
+        <div class="row files">
+            <div class="col-lg-4 col-md-2 col-xs-12" ng-repeat="file in queue" ng-class="{'processing': file.$processing()}">
+
+                <div class="thumbnail">
+                    <div ng-switch on="!!file.thumbnailUrl">
+                        <div class="preview flat" ng-switch-when="true">
+                            <a ng-href="{{file.url}}" title="{{file.name}}" download="{{file.name}}"><img ng-src="{{file.thumbnailUrl}}" alt=""></a>
+                        </div>
+                        <div class="preview flat" ng-switch-default file-upload-preview="file"></div>
+                    </div>
+                    <div class="caption">
+                        <h3>{{file.name}} <small>({{file.size | formatFileSize}})</small></h3>
+                        <div class="progress progress-striped active fade flat" data-ng-class="{pending: 'in'}[file.$state()]" data-file-upload-progress="file.$progress()">
+                            <div class="progress-bar progress-bar-success" data-ng-style="{width: num + '%'}"></div>
+                        </div>
+                        <p>
+                            <button type="button" class="btn btn-primary start" ng-click="file.$submit()" ng-hide="!file.$submit || options.autoUpload" ng-disabled="file.$state() == 'pending' || file.$state() == 'rejected'">
+              <i class="glyphicon glyphicon-upload"></i>
+              <span>Start</span>
+            </button>
+                            <button type="button" class="btn btn-warning cancel" ng-click="file.$cancel()" ng-hide="!file.$cancel">
+              <i class="glyphicon glyphicon-ban-circle"></i>
+              <span>Cancel</span>
+            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
